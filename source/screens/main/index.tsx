@@ -3,13 +3,14 @@ import { StatusBar, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MainTabProps } from "./types";
 import { Colors } from "../../constants/colors";
-import { Ionicons, Feather } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { RFValue } from "react-native-responsive-fontsize";
 
 // screens
 import { Explore } from "./explore";
 import { WishList } from "./wishlist";
 import { Settings } from "./settings";
+import { Messaging } from "./messaging";
 
 const Tab = createBottomTabNavigator<MainTabProps>();
 
@@ -20,7 +21,9 @@ function MainNavigator() {
       <Tab.Navigator
         initialRouteName={"explore"}
         screenOptions={{
-          tabBarActiveTintColor: Colors.white,
+          tabBarActiveTintColor: Colors.gray["100"],
+          tabBarInactiveTintColor: Colors.gray["500"],
+          tabBarShowLabel: false,
         }}
       >
         <Tab.Screen
@@ -32,8 +35,8 @@ function MainNavigator() {
               <>
                 <View
                   style={{
-                    height: RFValue(25),
-                    width: RFValue(25),
+                    height: RFValue(27),
+                    width: RFValue(27),
                     borderRadius: RFValue(8),
                     display: "flex",
                     justifyContent: "center",
@@ -52,7 +55,6 @@ function MainNavigator() {
               </>
             ),
             lazy: true,
-            tabBarShowLabel: false,
           }}
         />
 
@@ -62,13 +64,61 @@ function MainNavigator() {
           options={{
             headerShown: false,
             tabBarIcon: ({ color, size, focused }) => (
-              <Ionicons
-                name={focused ? "ios-layers" : "ios-layers-outline"}
-                size={RFValue(size)}
-                color={color}
-              />
+              <>
+                <View
+                  style={{
+                    height: RFValue(27),
+                    width: RFValue(27),
+                    borderRadius: RFValue(8),
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: focused
+                      ? Colors.primary["600"]
+                      : Colors.white,
+                  }}
+                >
+                  <Feather
+                    name={focused ? "heart" : "heart"}
+                    size={RFValue(size - 8)}
+                    color={color}
+                  />
+                </View>
+              </>
             ),
-            tabBarLabel: "Orders",
+            lazy: true,
+          }}
+        />
+
+        <Tab.Screen
+          name={"messaging"}
+          component={Messaging}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({ color, size, focused }) => (
+              <>
+                <View
+                  style={{
+                    height: RFValue(27),
+                    width: RFValue(27),
+                    borderRadius: RFValue(8),
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: focused
+                      ? Colors.primary["600"]
+                      : Colors.white,
+                  }}
+                >
+                  <Feather
+                    name={focused ? "message-square" : "message-square"}
+                    size={RFValue(size - 8)}
+                    color={color}
+                  />
+                </View>
+              </>
+            ),
+            lazy: true,
           }}
         />
 
@@ -78,13 +128,29 @@ function MainNavigator() {
           options={{
             headerShown: false,
             tabBarIcon: ({ color, size, focused }) => (
-              <Ionicons
-                name={focused ? "ios-cog" : "ios-cog-outline"}
-                size={RFValue(size)}
-                color={color}
-              />
+              <>
+                <View
+                  style={{
+                    height: RFValue(27),
+                    width: RFValue(27),
+                    borderRadius: RFValue(8),
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: focused
+                      ? Colors.primary["600"]
+                      : Colors.white,
+                  }}
+                >
+                  <Feather
+                    name={focused ? "settings" : "settings"}
+                    size={RFValue(size - 8)}
+                    color={color}
+                  />
+                </View>
+              </>
             ),
-            tabBarLabel: "Settings",
+            lazy: true,
           }}
         />
       </Tab.Navigator>

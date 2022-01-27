@@ -5,21 +5,21 @@ import { Button } from "../../../components/Button";
 import { Text } from "../../../components/Text";
 import { Colors } from "../../../constants/colors";
 
-function WishList() {
+function Messaging() {
   return (
     <>
       <SafeAreaView style={styles.container}>
         <View style={styles.subContainer}>
           <Text type="bold" style={styles.headerText}>
-            WishLists
+            Inbox
           </Text>
           {/* login text container */}
           <View style={styles.loginTextContainer}>
             <Text style={styles.loginTextHeader} type="medium">
-              Log in to view your wishlists
+              Log in to see your messages
             </Text>
             <Text type="light" style={styles.loginTextDescription}>
-              You can create, view or edit whislists once you've logged in.
+              Once you login, you'll find all messages from hosts here.
             </Text>
           </View>
           {/* button */}
@@ -62,4 +62,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export { WishList };
+export { Messaging };

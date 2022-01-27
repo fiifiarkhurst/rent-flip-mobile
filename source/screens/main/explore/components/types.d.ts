@@ -3,4 +3,5 @@ export interface PlaceCardComponentProp {
   location: string;
   price: string;
   rooms: string;
+  onPropertyPressed: () => void;
 }

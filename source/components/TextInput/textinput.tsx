@@ -33,13 +33,13 @@ const TextInput: FC<Props & TextInputProps> = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    // borderRadius: RFValue(5),
+    borderRadius: RFValue(5),
     height: RFValue(45),
     paddingHorizontal: RFValue(15),
-    color: Colors.gray["900"],
+    color: Colors.gray["800"],
     fontFamily: "Poppins-Regular",
   },
-  activeBorder: { borderWidth: 1, borderColor: Colors.gray["600"] },
+  activeBorder: { borderWidth: 1, borderColor: Colors.gray["500"] },
   inactiveBorder: { borderWidth: 0.5, borderColor: Colors.gray["400"] },
 });
 

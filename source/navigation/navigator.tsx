@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import { MainNavigator } from "../screens/main";
+import { RequestNavigator } from "../screens/request";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -14,6 +15,13 @@ const Navigator = () => {
           <Stack.Screen
             name={"Main"}
             component={MainNavigator}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name={"Request"}
+            component={RequestNavigator}
             options={{
               headerShown: false,
             }}

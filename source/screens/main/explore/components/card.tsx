@@ -11,10 +11,15 @@ function PropertiesCard({
   location,
   rooms,
   price,
+  onPropertyPressed,
 }: PlaceCardComponentProp) {
   return (
     <React.Fragment>
-      <TouchableOpacity activeOpacity={0.9} style={styles.container}>
+      <TouchableOpacity
+        onPress={onPropertyPressed}
+        activeOpacity={0.9}
+        style={styles.container}
+      >
         <Image
           source={{
             uri: featuredImage,

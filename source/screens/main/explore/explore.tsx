@@ -1,4 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import * as React from "react";
 import {
   StyleSheet,
@@ -46,6 +47,7 @@ const data = [
 ];
 
 function Explore() {
+  const navigation = useNavigation();
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -81,7 +83,12 @@ function Explore() {
             keyExtractor={(item) => item.location}
             renderItem={({ item }) => (
               <>
-                <PropertiesCard {...item} />
+                <PropertiesCard
+                  {...item}
+                  onPropertyPressed={() => {
+                    navigation.navigate("Request" as any);
+                  }}
+                />
               </>
             )}
           />

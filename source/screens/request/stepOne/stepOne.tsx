@@ -41,7 +41,7 @@ function StepOne({ navigation }: Props) {
               type={"medium"}
               style={{ color: Colors.primary["600"], fontSize: RFValue(13) }}
             >
-              Step 1 of 3
+              Step 1 of 4
             </Text>
             <Text
               type={"bold"}

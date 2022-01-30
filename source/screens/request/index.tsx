@@ -136,11 +136,29 @@ function RequestNavigator() {
               shadowOpacity: 0, // remove shadow on iOS
             },
             headerBackTitle: "Back",
-            headerTitle: "Preview",
+            headerTitle: "",
             headerTitleStyle: {
               fontFamily: "Poppins-Medium",
             },
-            headerLeft: () => null,
+            headerLeft: ({ onPress }) => (
+              <>
+                <TouchableOpacity
+                  style={{
+                    marginLeft: RFValue(15),
+                    backgroundColor: Colors.gray["100"],
+                    padding: RFValue(7),
+                    borderRadius: RFValue(20),
+                  }}
+                  onPress={onPress}
+                >
+                  <Ionicons
+                    name={"ios-arrow-back-outline"}
+                    color={Colors.gray["600"]}
+                    size={RFValue(20)}
+                  />
+                </TouchableOpacity>
+              </>
+            ),
           }}
         />
         <Stack.Screen

@@ -74,9 +74,8 @@ const styles = StyleSheet.create({
   },
   featuredImage: {
     width: "100%",
-    height: RFValue(140),
-    borderTopLeftRadius: RFValue(10),
-    borderTopRightRadius: RFValue(10),
+    height: RFValue(150),
+    borderRadius: RFValue(10),
   },
   locationContainer: {
     display: "flex",

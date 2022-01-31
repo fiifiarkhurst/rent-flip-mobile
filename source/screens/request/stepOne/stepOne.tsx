@@ -6,26 +6,34 @@ import { RFValue } from "react-native-responsive-fontsize";
 import { Colors } from "../../../constants/colors";
 import { TextInput } from "../../../components/TextInput";
 import { Button } from "../../../components/Button";
-import { CompositeNavigationProp } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../../../navigation/types";
+import { StackScreenProps } from "@react-navigation/stack";
 import { RequestStackProps } from "../types";
+import { useNetInfo } from "@react-native-community/netinfo";
+import Toast from "react-native-toast-message";
 
-type StepOneScreenNavigationProp = CompositeNavigationProp<
-  StackNavigationProp<RequestStackProps, "stepOne">,
-  StackNavigationProp<RootStackParamList>
->;
+type Props = StackScreenProps<RequestStackProps, "stepOne">;
 
-type Props = {
-  navigation: StepOneScreenNavigationProp;
-};
+function StepOne({ navigation, route }: Props) {
+  const [name, setName] = React.useState("");
+  const { isInternetReachable } = useNetInfo();
 
-function StepOne({ navigation }: Props) {
   function handleSubmit() {
+    //check if internet is avail
+    if (!isInternetReachable) {
+      return Toast.show({
+        text1: "Application Error",
+        text2: "Internet is not reachable",
+        type: "error",
+      });
+    }
     navigation.push("stepTwo", {
-      name: "Fiifi",
+      name: name.trim(),
+      propertyId: route.params.propertyId,
     });
   }
+
+  const disableButton = name.trim() === "";
+
   return (
     <React.Fragment>
       <KeyboardAwareScrollView style={styles.container}>
@@ -56,8 +64,8 @@ function StepOne({ navigation }: Props) {
                 <TextInput
                   placeholder={"John Doe"}
                   autoFocus
-                  // value={lastName}
-                  // onChangeText={setLastName}
+                  value={name}
+                  onChangeText={setName}
                   textContentType={"familyName"}
                 />
               </View>
@@ -70,6 +78,7 @@ function StepOne({ navigation }: Props) {
               iconStyle={{ marginLeft: RFValue(10) }}
               style={styles.button}
               title={"Next"}
+              disabled={disableButton}
             />
           </View>
         </View>

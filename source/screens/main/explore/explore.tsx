@@ -1,5 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { AxiosResponse } from "axios";
 import * as React from "react";
 import {
   StyleSheet,
@@ -8,46 +9,34 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
+import { useQuery } from "react-query";
+import { EmptyState, ErrorState } from "../../../components/Alert";
 // import { SearchInput } from "../../../components/Search";
-import { Text } from "../../../components/Text";
 import { Colors } from "../../../constants/colors";
+import { GET_PROPERITES } from "../../../constants/constants";
+import { get } from "../../../services/transport";
 import { Location, PropertiesCard } from "./components";
+import { GetPropertiesOutpuProp, Props } from "./types";
 
-const data = [
-  {
-    featuredImage:
-      "https://images.unsplash.com/photo-1612637968894-660373e23b03?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YXBhcnRtZW50JTIwYnVpbGRpbmd8ZW58MHwwfDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
-    location: "East Legon, Ghana Link",
-    price: "400.00",
-    rooms: "3",
-  },
-  {
-    featuredImage:
-      "https://images.unsplash.com/photo-1559338391-e14b84a22772?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTR8fGFwYXJ0bWVudCUyMGJ1aWxkaW5nfGVufDB8MHwwfHw%3D&auto=format&fit=crop&w=800&q=60",
-    location: "Ages Abba, Apartment",
-    price: "800.00",
-    rooms: "4",
-  },
-  {
-    featuredImage:
-      "https://images.unsplash.com/photo-1515263487990-61b07816b324?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8YXBhcnRtZW50JTIwYnVpbGRpbmd8ZW58MHwwfDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
-    location: "Mempasem",
-    price: "60.00",
-    rooms: "2",
-  },
-  {
-    featuredImage:
-      "https://images.unsplash.com/photo-1594484208280-efa00f96fc21?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8YXBhcnRtZW50JTIwYnVpbGRpbmd8ZW58MHwwfDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
-    location: "Adenta",
-    price: "600.00",
-    rooms: "10",
-  },
-];
+function Explore({ navigation }: Props) {
+  // const navigation: any = useNavigation();
+  const { data, isLoading, refetch } = useQuery<
+    any,
+    any,
+    AxiosResponse<GetPropertiesOutpuProp>
+  >("properties", () => get(GET_PROPERITES));
 
-function Explore() {
-  const navigation = useNavigation();
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      refetch();
+    });
+
+    return unsubscribe;
+  }, [navigation, refetch]);
+
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -77,21 +66,52 @@ function Explore() {
           </View>
           {/* body */}
 
-          <FlatList
-            data={data}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => item.location}
-            renderItem={({ item }) => (
-              <>
-                <PropertiesCard
-                  {...item}
-                  onPropertyPressed={() => {
-                    navigation.navigate("Request" as any);
-                  }}
-                />
-              </>
-            )}
-          />
+          {isLoading ? (
+            <>
+              <View style={styles.alertContainer}>
+                <ActivityIndicator />
+              </View>
+            </>
+          ) : (
+            <>
+              {data?.data?.success ? (
+                <>
+                  {data?.data?.payload?.length === 0 ? (
+                    <>
+                      <EmptyState model="properties" />
+                    </>
+                  ) : (
+                    <>
+                      <FlatList
+                        data={data?.data?.payload}
+                        showsVerticalScrollIndicator={false}
+                        keyExtractor={(item) => item.code}
+                        renderItem={({ item }) => (
+                          <>
+                            <PropertiesCard
+                              property={item}
+                              onPropertyPressed={() => {
+                                navigation.navigate("Request", {
+                                  screen: "stepOne",
+                                  params: {
+                                    propertyId: item._id,
+                                  },
+                                });
+                              }}
+                            />
+                          </>
+                        )}
+                      />
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  <ErrorState model="properties" refetch={refetch} />
+                </>
+              )}
+            </>
+          )}
         </View>
       </SafeAreaView>
     </>
@@ -106,6 +126,8 @@ const styles = StyleSheet.create({
   subContainer: {
     paddingHorizontal: RFValue(20),
   },
+  alertContainer: { flex: 1, marginTop: RFValue(50), alignItems: "center" },
+
   headerContainer: {
     display: "flex",
     flexDirection: "row",

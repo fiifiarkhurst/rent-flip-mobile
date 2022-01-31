@@ -1,7 +1,6 @@
+import { Property } from "../types";
+
 export interface PlaceCardComponentProp {
-  featuredImage: string;
-  location: string;
-  price: string;
-  rooms: string;
+  property: Property;
   onPropertyPressed: () => void;
 }

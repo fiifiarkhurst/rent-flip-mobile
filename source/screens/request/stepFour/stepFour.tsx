@@ -4,22 +4,14 @@ import { RFValue } from "react-native-responsive-fontsize";
 import { Text } from "../../../components/Text";
 import { Colors } from "../../../constants/colors";
 import { Button } from "../../../components/Button";
-import { CompositeNavigationProp } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { StackScreenProps } from "@react-navigation/stack";
 import { RequestStackProps } from "../types";
-import { RootStackParamList } from "../../../navigation/types";
 import { DatePicker } from "../../../components/DatePickers";
 import { IDImagePicker } from "../../../components/ImagePicker";
 
-type StepFouterScreenNavigationProp = CompositeNavigationProp<
-  StackNavigationProp<RequestStackProps, "stepOne">,
-  StackNavigationProp<RootStackParamList>
->;
+type Props = StackScreenProps<RequestStackProps, "stepFour">;
 
-type Props = {
-  navigation: StepFouterScreenNavigationProp;
-};
-function StepFour({ navigation }: Props) {
+function StepFour({ navigation, route }: Props) {
   const [selectedStartDate, setSelectedStartDate] = React.useState<Date>(
     new Date()
   );

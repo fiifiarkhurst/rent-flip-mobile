@@ -5,12 +5,10 @@ import { Text } from "../../../../components/Text";
 import { Colors } from "../../../../constants/colors";
 import { Feather, Entypo } from "@expo/vector-icons";
 import { PlaceCardComponentProp } from "./types";
+import numeral from "numeral";
 
 function PropertiesCard({
-  featuredImage,
-  location,
-  rooms,
-  price,
+  property,
   onPropertyPressed,
 }: PlaceCardComponentProp) {
   return (
@@ -22,13 +20,14 @@ function PropertiesCard({
       >
         <Image
           source={{
-            uri: featuredImage,
+            uri: property.featuredBigImage,
           }}
           style={styles.featuredImage}
           resizeMode="cover"
         />
+
         <View style={styles.locationContainer}>
-          <Text type="medium">{location}</Text>
+          <Text type="medium">{property.address}</Text>
           <Feather
             name="heart"
             color={Colors.primary["600"]}
@@ -52,13 +51,13 @@ function PropertiesCard({
                 },
               ]}
             >
-              {rooms} rooms
+              {property?.meta.numberOfBedrooms} rooms
             </Text>
           </View>
 
           {/* price */}
           <Text type="regular" style={styles.smallText}>
-            GH₵ {price} / night
+            GH₵ {numeral(property?.price).format("0,0")} / night
           </Text>
         </View>
       </TouchableOpacity>
@@ -71,7 +70,9 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     marginBottom: RFValue(35),
+    position: "relative",
   },
+
   featuredImage: {
     width: "100%",
     height: RFValue(150),

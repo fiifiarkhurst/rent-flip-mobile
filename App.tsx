@@ -1,5 +1,7 @@
 import React from "react";
 import { useFonts } from "expo-font";
+import { ReactQueryConfigurationProvider } from "./source/services/react-query-config";
+import Toast from "react-native-toast-message";
 import AppLoading from "expo-app-loading";
 import AppNavigator from "./source/navigation";
 
@@ -25,7 +27,11 @@ export default function App() {
   } else {
     return (
       <React.Fragment>
-        <AppNavigator />
+        <ReactQueryConfigurationProvider>
+          <AppNavigator />
+        </ReactQueryConfigurationProvider>
+
+        <Toast position="top" />
       </React.Fragment>
     );
   }

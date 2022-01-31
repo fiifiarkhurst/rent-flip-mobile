@@ -6,23 +6,28 @@ import { RFValue } from "react-native-responsive-fontsize";
 import { Colors } from "../../../constants/colors";
 import { TextInput } from "../../../components/TextInput";
 import { Button } from "../../../components/Button";
-import { CompositeNavigationProp } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../../../navigation/types";
+import { StackScreenProps } from "@react-navigation/stack";
 import { RequestStackProps } from "../types";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { useSendPhoneVerification, useVerifyPhone } from "./broker";
 import CodeInput from "react-native-confirmation-code-input";
+import Toast from "react-native-toast-message";
+import { AxiosError, AxiosResponse } from "axios";
+import { SendPhoneVerificationOutput, VerifyPhoneOutput } from "./types";
 
-type StepThreeScreenNavigationProp = CompositeNavigationProp<
-  StackNavigationProp<RequestStackProps, "stepTwo">,
-  StackNavigationProp<RootStackParamList>
->;
+type Props = StackScreenProps<RequestStackProps, "stepThree">;
 
-type Props = {
-  navigation: StepThreeScreenNavigationProp;
-};
+function StepThree({ navigation, route }: Props) {
+  const { isInternetReachable } = useNetInfo();
 
-function StepThree({ navigation }: Props) {
   const [countDown, setCountdown] = React.useState(59);
+  const [phoneNumber, setPhoneNumber] = React.useState("");
+  const [isCodeSent, setIsCodeSent] = React.useState(false);
+  const [code, setCode] = React.useState("");
+
+  const { mutateAsync, isLoading } = useSendPhoneVerification(phoneNumber);
+  const { mutateAsync: verifyPhoneInvoker, isLoading: isVerifying } =
+    useVerifyPhone(phoneNumber);
 
   let resendLoad;
 
@@ -36,13 +41,76 @@ function StepThree({ navigation }: Props) {
 
   function resendCode() {}
 
-  function handleNext() {
-    navigation.push("stepFour", {
-      name: "Fiifi",
-      email: "fooa",
-      phone: "",
-    });
+  function handleSendVerifyCode() {
+    //check if internet is avail
+    if (!isInternetReachable) {
+      return Toast.show({
+        text1: "Application Error",
+        text2: "Internet is not reachable",
+        type: "error",
+      });
+    }
+    //validate phone
+    if (phoneNumber.trim() === "" || phoneNumber.trim().length < 10) {
+      return Toast.show({
+        text1: "Authentication Error",
+        text2: "Please enter a valid phone numnber",
+        type: "error",
+      });
+    }
+
+    mutateAsync({})
+      .then((res: AxiosResponse<SendPhoneVerificationOutput>) => {
+        Toast.show({
+          text1: "Verification code sent",
+          text2: "Verify your phone number by entering code.",
+          type: "success",
+        });
+        setIsCodeSent(res?.data?.success);
+      })
+      .catch((e: AxiosError) => {
+        Toast.show({
+          text1: "Oops, something happened",
+          text2: "An error occured",
+          type: "error",
+        });
+      });
   }
+
+  function handleVerifyPhone() {
+    //check if internet is avail
+    if (!isInternetReachable) {
+      return Toast.show({
+        text1: "Application Error",
+        text2: "Internet is not reachable",
+        type: "error",
+      });
+    }
+
+    verifyPhoneInvoker({
+      code: code,
+    })
+      .then((res: AxiosResponse<VerifyPhoneOutput>) => {
+        if (res.data.success) {
+          navigation.push("stepFour", {
+            propertyId: route?.params?.propertyId,
+            name: route?.params?.propertyId,
+            email: route?.params?.email,
+            phone: phoneNumber.trim(),
+          });
+        }
+      })
+      .catch((e: AxiosError) => {
+        Toast.show({
+          text1: "Oops, something happened",
+          text2: "Could not verify",
+          type: "error",
+        });
+      });
+  }
+
+  const disableButton = isLoading || phoneNumber.trim() === "";
+  const disableVerifyButton = isVerifying || code.trim() === "";
   return (
     <React.Fragment>
       <KeyboardAwareScrollView style={styles.container}>
@@ -73,72 +141,97 @@ function StepThree({ navigation }: Props) {
                 <TextInput
                   placeholder={"0201080802"}
                   autoFocus
-                  // value={lastName}
-                  // onChangeText={setLastName}
+                  value={phoneNumber}
+                  onChangeText={setPhoneNumber}
                   keyboardType={"number-pad"}
                 />
               </View>
             </View>
-            <View style={{ marginTop: RFValue(30) }}>
-              <View
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: "row",
-                  marginBottom: RFValue(5),
-                }}
-              >
-                <Text type={"medium"}>Verify your phone number *</Text>
-                <View style={styles.didntReceiveCode}>
-                  {resendLoad ? (
-                    <Text style={{ color: Colors.yellow }}>Sending...</Text>
-                  ) : countDown !== 0 ? (
-                    <Text style={{ color: Colors.yellow }}>
-                      0:{countDown < 10 ? `0${countDown}` : countDown}
-                    </Text>
-                  ) : (
-                    <TouchableOpacity onPress={resendCode}>
-                      <Text
-                        type={"medium"}
-                        style={{
-                          color: Colors.primary["800"],
-                        }}
-                      >
-                        Resend Code
-                      </Text>
-                    </TouchableOpacity>
-                  )}
+
+            {isCodeSent && (
+              <>
+                <View style={{ marginTop: RFValue(30) }}>
+                  <View
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      flexDirection: "row",
+                      marginBottom: RFValue(5),
+                    }}
+                  >
+                    <Text type={"medium"}>Verify your phone number *</Text>
+                    <View style={styles.didntReceiveCode}>
+                      {resendLoad ? (
+                        <Text style={{ color: Colors.yellow }}>Sending...</Text>
+                      ) : countDown !== 0 ? (
+                        <Text style={{ color: Colors.yellow }}>
+                          0:{countDown < 10 ? `0${countDown}` : countDown}
+                        </Text>
+                      ) : (
+                        <TouchableOpacity onPress={resendCode}>
+                          <Text
+                            type={"medium"}
+                            style={{
+                              color: Colors.primary["800"],
+                            }}
+                          >
+                            Resend Code
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  </View>
+
+                  <CodeInput
+                    // ref="codeInputRef1"
+                    activeColor={Colors.primary["700"]}
+                    inactiveColor={Colors.gray["200"]}
+                    autoFocus={true}
+                    ignoreCase={true}
+                    className={"border-b"}
+                    keyboardType="number-pad"
+                    inputPosition="center"
+                    size={50}
+                    space={RFValue(10)}
+                    codeLength={6}
+                    onFulfill={(newCode: string) => {
+                      setCode(newCode);
+                    }}
+                    containerStyle={{ marginTop: RFValue(5) }}
+                    codeInputStyle={{ borderWidth: 1 }}
+                  />
                 </View>
+              </>
+            )}
+          </View>
+
+          {isCodeSent ? (
+            <>
+              <View style={styles.buttonContainer}>
+                <Button
+                  onPress={handleVerifyPhone}
+                  iconStyle={{ marginLeft: RFValue(10) }}
+                  style={styles.button}
+                  title={"Verify"}
+                  disabled={disableVerifyButton}
+                  loading={isVerifying}
+                />
               </View>
-
-              <CodeInput
-                // ref="codeInputRef1"
-                activeColor={Colors.primary["700"]}
-                inactiveColor={Colors.gray["200"]}
-                autoFocus={true}
-                ignoreCase={true}
-                className={"border-b"}
-                keyboardType="number-pad"
-                inputPosition="center"
-                size={50}
-                space={RFValue(20)}
-                onFulfill={(newCode: string) => {
-                  // setCode(newCode);
-                }}
-                containerStyle={{ marginTop: RFValue(5) }}
-                codeInputStyle={{ borderWidth: 1 }}
-              />
-            </View>
-          </View>
-
-          <View style={styles.buttonContainer}>
-            <Button
-              onPress={handleNext}
-              iconStyle={{ marginLeft: RFValue(10) }}
-              style={styles.button}
-              title={"Next"}
-            />
-          </View>
+            </>
+          ) : (
+            <>
+              <View style={styles.buttonContainer}>
+                <Button
+                  onPress={handleSendVerifyCode}
+                  iconStyle={{ marginLeft: RFValue(10) }}
+                  style={styles.button}
+                  title={"Next"}
+                  disabled={disableButton}
+                  loading={isLoading}
+                />
+              </View>
+            </>
+          )}
         </View>
       </KeyboardAwareScrollView>
     </React.Fragment>

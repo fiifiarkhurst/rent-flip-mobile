@@ -94,7 +94,7 @@ function Explore({ navigation }: Props) {
                                 navigation.navigate("Request", {
                                   screen: "stepOne",
                                   params: {
-                                    propertyId: item._id,
+                                    property: item._id,
                                   },
                                 });
                               }}

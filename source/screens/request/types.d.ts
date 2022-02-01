@@ -1,21 +1,24 @@
 export type RequestStackProps = {
   stepOne: {
-    propertyId: string;
+    property: string;
   };
   stepTwo: {
-    propertyId: string;
+    property: string;
     name: string;
+    photo: string;
   };
   stepThree: {
-    propertyId: string;
+    property: string;
     name: string;
     email: string;
+    photo: string;
   };
   stepFour: {
-    propertyId: string;
+    property: string;
     name: string;
     phone: string;
     email: string;
+    photo: string;
   };
   success: undefined;
 };

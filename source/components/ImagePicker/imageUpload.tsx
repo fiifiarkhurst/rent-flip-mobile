@@ -6,11 +6,11 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 import { Text } from "../Text";
 import { RFValue } from "react-native-responsive-fontsize";
 import { Colors } from "../../constants/colors";
 import { Props } from "./types";
+import * as ImagePicker from "expo-image-picker";
 
 function IDImagePicker({
   setFile,
@@ -19,6 +19,8 @@ function IDImagePicker({
   uploading,
   uploaded,
 }: Props) {
+  const [path, setPath] = React.useState<string | null>(null);
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -29,13 +31,14 @@ function IDImagePicker({
     });
 
     if (!result.cancelled) {
-      setFile(result?.uri);
+      setPath(result.uri);
+      setFile(result);
     }
   };
 
   const removeImage = () => {
     setFile(null);
-    // reset();
+    reset();
   };
 
   const askToRemove = () => {
@@ -61,7 +64,7 @@ function IDImagePicker({
       <View style={styles.container}>
         <TouchableOpacity
           style={{
-            width: "65%",
+            width: "60%",
           }}
           activeOpacity={0.8}
           onPress={pickImage}
@@ -77,35 +80,53 @@ function IDImagePicker({
           </Text>
         </TouchableOpacity>
 
-        {/* {!uploading && (
+        {path && (
           <>
-            <TouchableOpacity
-              onPress={askToRemove}
-              style={styles.removeImageContainer}
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                width: "100%",
+              }}
             >
-              <Text
-                type="medium"
-                style={{ fontSize: RFValue(10), color: Colors.white }}
-              >
-                Remove
-              </Text>
-            </TouchableOpacity>
-          </>
-        )} */}
+              {!uploading && (
+                <>
+                  <TouchableOpacity
+                    onPress={askToRemove}
+                    style={styles.removeImageContainer}
+                  >
+                    <Text
+                      type="medium"
+                      style={{
+                        fontSize: RFValue(10),
+                        color: Colors.red,
+                      }}
+                    >
+                      Remove
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              )}
 
-        {!uploaded && (
-          <>
-            <TouchableOpacity
-              onPress={uploading ? undefined : askToUpload}
-              style={styles.uploadImageContainer}
-            >
-              <Text
-                type="medium"
-                style={{ fontSize: RFValue(10), color: Colors.white }}
-              >
-                Upload
-              </Text>
-            </TouchableOpacity>
+              {!uploaded && (
+                <>
+                  <TouchableOpacity
+                    onPress={uploading ? undefined : askToUpload}
+                    style={styles.uploadImageContainer}
+                  >
+                    <Text
+                      type="medium"
+                      style={{
+                        fontSize: RFValue(10),
+                        color: Colors.gray["700"],
+                      }}
+                    >
+                      {uploading ? "..." : "Upload"}
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
           </>
         )}
       </View>
@@ -138,23 +159,29 @@ const styles = StyleSheet.create({
     }),
   },
   uploadImageContainer: {
-    backgroundColor: Colors.black,
+    backgroundColor: Colors.gray["200"],
     height: RFValue(21),
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    width: "18%",
+    width: "20%",
     borderRadius: RFValue(60),
+    marginLeft: RFValue(4),
   },
   removeImageContainer: {
-    backgroundColor: Colors.red,
+    backgroundColor: "#fee2e2",
     height: RFValue(21),
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    width: "18%",
+    width: "20%",
     borderRadius: RFValue(60),
   },
+  imageActionView: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  width35: { width: "35%" },
 });
 
 export { IDImagePicker };

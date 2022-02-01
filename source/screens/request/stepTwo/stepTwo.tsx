@@ -93,8 +93,9 @@ function StepTwo({ navigation, route }: Props) {
       .then((res: AxiosResponse<VerifyEmailOutput>) => {
         if (res.data.success) {
           navigation.push("stepThree", {
-            propertyId: route?.params?.propertyId,
-            name: route?.params?.propertyId,
+            property: route?.params?.property,
+            name: route?.params?.name,
+            photo: route?.params?.photo,
             email: email.trim(),
           });
         }

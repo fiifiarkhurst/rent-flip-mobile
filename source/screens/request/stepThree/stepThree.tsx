@@ -10,10 +10,10 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { RequestStackProps } from "../types";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useSendPhoneVerification, useVerifyPhone } from "./broker";
-import CodeInput from "react-native-confirmation-code-input";
-import Toast from "react-native-toast-message";
 import { AxiosError, AxiosResponse } from "axios";
 import { SendPhoneVerificationOutput, VerifyPhoneOutput } from "./types";
+import Toast from "react-native-toast-message";
+import CodeInput from "react-native-confirmation-code-input";
 
 type Props = StackScreenProps<RequestStackProps, "stepThree">;
 
@@ -93,9 +93,10 @@ function StepThree({ navigation, route }: Props) {
       .then((res: AxiosResponse<VerifyPhoneOutput>) => {
         if (res.data.success) {
           navigation.push("stepFour", {
-            propertyId: route?.params?.propertyId,
-            name: route?.params?.propertyId,
+            property: route?.params?.property,
+            name: route?.params?.name,
             email: route?.params?.email,
+            photo: route?.params?.photo,
             phone: phoneNumber.trim(),
           });
         }

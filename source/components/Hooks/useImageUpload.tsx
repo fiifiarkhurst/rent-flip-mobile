@@ -1,7 +1,5 @@
 import { useState } from "react";
-// import {storage} from '../../services/firebase';
-
-let storage: any;
+import { storage } from "../../services/firebase";
 
 const useImageUpload = (assetFolderName: string) => {
   const [loading, setLoading] = useState(false);

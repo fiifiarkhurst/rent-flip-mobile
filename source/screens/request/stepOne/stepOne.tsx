@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Image, TouchableOpacity, Alert } from "react-native";
 import { Text } from "../../../components/Text";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { RFValue } from "react-native-responsive-fontsize";
@@ -9,15 +9,61 @@ import { Button } from "../../../components/Button";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RequestStackProps } from "../types";
 import { useNetInfo } from "@react-native-community/netinfo";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { getBlob, getFileExtension } from "../stepFour/broker";
+import { useImageUpload } from "../../../components/Hooks";
+import * as ImagePicker from "expo-image-picker";
 import Toast from "react-native-toast-message";
 
 type Props = StackScreenProps<RequestStackProps, "stepOne">;
 
 function StepOne({ navigation, route }: Props) {
   const [name, setName] = React.useState("");
+  const [file, setFile] = React.useState<any>();
+  const [path, setPath] = React.useState<string | null>(null);
   const { isInternetReachable } = useNetInfo();
+  const { upload, loading } = useImageUpload("rent-flip-profile");
 
-  function handleSubmit() {
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setPath(result.uri);
+      setFile(result);
+    }
+  };
+
+  const removeImage = () => {
+    setFile(null);
+    setPath(null);
+  };
+
+  const askToRemove = () => {
+    Alert.alert(
+      "Remove",
+      "Are you sure you want to remove this image?",
+      [
+        {
+          text: "No",
+          onPress: () => {},
+          style: "cancel",
+        },
+        {
+          text: "Yes!",
+          onPress: removeImage,
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  async function handleSubmit() {
     //check if internet is avail
     if (!isInternetReachable) {
       return Toast.show({
@@ -26,13 +72,26 @@ function StepOne({ navigation, route }: Props) {
         type: "error",
       });
     }
+
+    if (!file) {
+      return Toast.show({
+        text1: "Application Error",
+        text2: "Please add an image",
+        type: "error",
+      });
+    }
+
+    const getExtension = getFileExtension(file?.type);
+    let blob = await getBlob(file?.uri);
+    const imageString = await upload(blob, getExtension);
     navigation.push("stepTwo", {
       name: name.trim(),
-      propertyId: route.params.propertyId,
+      property: route.params.property,
+      photo: imageString,
     });
   }
 
-  const disableButton = name.trim() === "";
+  const disableButton = loading || name.trim() === "" || !file;
 
   return (
     <React.Fragment>
@@ -58,12 +117,53 @@ function StepOne({ navigation, route }: Props) {
               Enter your details
             </Text>
 
-            <View style={{ marginTop: RFValue(20) }}>
+            <View
+              style={{
+                marginVertical: RFValue(20),
+                position: "relative",
+              }}
+            >
+              {path ? (
+                <>
+                  <Image
+                    style={styles.imagePlaceHolder}
+                    source={{
+                      uri: path,
+                    }}
+                  />
+                  <TouchableOpacity activeOpacity={0.9} onPress={askToRemove}>
+                    <View style={styles.pickImageContainer}>
+                      <MaterialCommunityIcons
+                        name={"pencil-remove-outline"}
+                        color={Colors.white}
+                        size={RFValue(18)}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <>
+                  <Image
+                    style={styles.imagePlaceHolder}
+                    source={require("../../../assets/images/male.jpeg")}
+                  />
+                  <TouchableOpacity activeOpacity={0.9} onPress={pickImage}>
+                    <View style={styles.pickImageContainer}>
+                      <Ionicons
+                        name={"ios-camera"}
+                        color={Colors.white}
+                        size={RFValue(18)}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+            <View>
               <Text type={"medium"}>Full Name *</Text>
               <View style={{ marginTop: RFValue(5) }}>
                 <TextInput
                   placeholder={"John Doe"}
-                  autoFocus
                   value={name}
                   onChangeText={setName}
                   textContentType={"familyName"}
@@ -78,6 +178,7 @@ function StepOne({ navigation, route }: Props) {
               iconStyle={{ marginLeft: RFValue(10) }}
               style={styles.button}
               title={"Next"}
+              loading={loading}
               disabled={disableButton}
             />
           </View>
@@ -100,6 +201,19 @@ const styles = StyleSheet.create({
   button: {
     // width: '50%',
     paddingHorizontal: RFValue(50),
+  },
+  imagePlaceHolder: {
+    height: RFValue(100),
+    width: RFValue(100),
+    borderRadius: RFValue(50),
+  },
+  pickImageContainer: {
+    position: "absolute",
+    top: -33,
+    left: 90,
+    backgroundColor: Colors.gray["700"],
+    padding: 6,
+    borderRadius: 30,
   },
 });
 

@@ -5,6 +5,7 @@ import {
   Platform,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { Text } from "../Text";
 import { RFValue } from "react-native-responsive-fontsize";
@@ -114,15 +115,23 @@ function IDImagePicker({
                     onPress={uploading ? undefined : askToUpload}
                     style={styles.uploadImageContainer}
                   >
-                    <Text
-                      type="medium"
-                      style={{
-                        fontSize: RFValue(10),
-                        color: Colors.gray["700"],
-                      }}
-                    >
-                      {uploading ? "..." : "Upload"}
-                    </Text>
+                    {uploading ? (
+                      <>
+                        <ActivityIndicator size={2} />
+                      </>
+                    ) : (
+                      <>
+                        <Text
+                          type="medium"
+                          style={{
+                            fontSize: RFValue(10),
+                            color: Colors.gray["700"],
+                          }}
+                        >
+                          Upload
+                        </Text>
+                      </>
+                    )}
                   </TouchableOpacity>
                 </>
               )}

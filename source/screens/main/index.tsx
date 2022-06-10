@@ -11,6 +11,7 @@ import { Explore } from "./explore";
 import { WishList } from "./wishlist";
 import { Settings } from "./settings";
 import { Messaging } from "./messaging";
+import { AddProperty } from "./add-property";
 
 const Tab = createBottomTabNavigator<MainTabProps>();
 
@@ -48,6 +49,37 @@ function MainNavigator() {
                 >
                   <Feather
                     name={focused ? "search" : "search"}
+                    size={RFValue(size - 8)}
+                    color={color}
+                  />
+                </View>
+              </>
+            ),
+            lazy: true,
+          }}
+        />
+        <Tab.Screen
+          name={"addProperty"}
+          component={AddProperty}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({ color, size, focused }) => (
+              <>
+                <View
+                  style={{
+                    height: RFValue(27),
+                    width: RFValue(27),
+                    borderRadius: RFValue(8),
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: focused
+                      ? Colors.primary["600"]
+                      : Colors.white,
+                  }}
+                >
+                  <Feather
+                    name={focused ? "clipboard" : "clipboard"}
                     size={RFValue(size - 8)}
                     color={color}
                   />

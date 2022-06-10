@@ -1,11 +1,21 @@
+import { StackScreenProps } from "@react-navigation/stack";
 import * as React from "react";
-import { StyleSheet, SafeAreaView, View } from "react-native";
+import { StyleSheet, SafeAreaView, View, TouchableOpacity } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import { Button } from "../../../components/Button";
 import { Text } from "../../../components/Text";
 import { Colors } from "../../../constants/colors";
 
-function Settings() {
+type Props = StackScreenProps<any, "settings">;
+
+function Settings({ navigation }: Props) {
+  const handleGoToLogin = React.useCallback(() => {
+    navigation.navigate("Auth");
+  }, []);
+
+  const handleGoToSignup = React.useCallback(() => {
+    navigation.navigate("Auth");
+  }, []);
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -21,7 +31,7 @@ function Settings() {
           </View>
           {/* button */}
           <View style={styles.buttonContainer}>
-            <Button title="Login" />
+            <Button onPress={handleGoToLogin} title="Login" />
             <View
               style={{
                 flexDirection: "row",
@@ -40,20 +50,22 @@ function Settings() {
               >
                 Don't have an account?
               </Text>
-              <Text
-                type="medium"
-                style={[
-                  styles.loginTextDescription,
-                  {
-                    fontSize: RFValue(12),
-                    color: Colors.gray["800"],
-                    paddingLeft: 3,
-                    textDecorationLine: "underline",
-                  },
-                ]}
-              >
-                Sign up
-              </Text>
+              <TouchableOpacity activeOpacity={0.9} onPress={handleGoToSignup}>
+                <Text
+                  type="medium"
+                  style={[
+                    styles.loginTextDescription,
+                    {
+                      fontSize: RFValue(12),
+                      color: Colors.gray["800"],
+                      paddingLeft: 3,
+                      textDecorationLine: "underline",
+                    },
+                  ]}
+                >
+                  Sign up
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>

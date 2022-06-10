@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { RootStackParamList } from "./types";
 import { MainNavigator } from "../screens/main";
 import { RequestNavigator } from "../screens/request";
+import { AuthStackNavigator } from "../screens/auth";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -17,6 +18,14 @@ const Navigator = () => {
             component={MainNavigator}
             options={{
               headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="Auth"
+            component={AuthStackNavigator}
+            options={{
+              headerShown: false,
+              presentation: "modal",
             }}
           />
           <Stack.Screen

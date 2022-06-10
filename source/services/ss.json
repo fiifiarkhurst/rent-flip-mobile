@@ -1,0 +1,23 @@
+{
+  "name": "Domey Benjamin",
+  "email": "domeybenjamin1@gmail.com",
+  "phone": "0201080802",
+  "photo": "dvf",
+  "idType": "NationalID",
+  "idPhoto": "dfvdfvdf",
+  "startDate": "2022-01-25T23:50:44.551Z",
+  "endDate": "2022-01-25T23:50:44.551Z",
+  "paySlips": ["sdfsfdv", "Svsdfv"],
+  "propertyType": "External",
+  "externalProperty": {
+    "images": [],
+    "owner": {
+      "name": "Domey Benjamin",
+      "phone": "233545526664"
+    },
+    "location": {
+      "type": "Point",
+      "coordinates": [5.3, 24.3]
+    }
+  }
+}

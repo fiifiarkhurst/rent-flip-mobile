@@ -1,4 +1,3 @@
-import { StackScreenProps } from "@react-navigation/stack";
 import * as React from "react";
 import { StyleSheet, SafeAreaView, View } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
@@ -6,31 +5,27 @@ import { Button } from "../../../components/Button";
 import { Text } from "../../../components/Text";
 import { Colors } from "../../../constants/colors";
 
-type Props = StackScreenProps<any, "wishlist">;
-
-function WishList({ navigation }: Props) {
-  const handleGoToLogin = React.useCallback(() => {
-    navigation.navigate("Auth");
-  }, []);
+function AddProperty() {
   return (
     <>
       <SafeAreaView style={styles.container}>
         <View style={styles.subContainer}>
           <Text type="bold" style={styles.headerText}>
-            WishLists
+            Add Property
           </Text>
-          {/* login text container */}
-          <View style={styles.loginTextContainer}>
-            <Text style={styles.loginTextHeader} type="medium">
-              Log in to view your wishlists
+          {/* add property text container */}
+          <View style={styles.addPropertyTextContainer}>
+            <Text style={styles.addPropertyTextHeader} type="medium">
+              Adding any of your properties
             </Text>
-            <Text type="light" style={styles.loginTextDescription}>
-              You can create, view or edit whislists once you've logged in.
+            <Text type="light" style={styles.addPropertyTextDescription}>
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Enim
+              nihil magni magnam ?
             </Text>
           </View>
           {/* button */}
           <View style={styles.buttonContainer}>
-            <Button title="Login" onPress={handleGoToLogin} />
+            <Button title="Add Property" />
           </View>
         </View>
       </SafeAreaView>
@@ -51,21 +46,21 @@ const styles = StyleSheet.create({
     fontSize: RFValue(20),
     color: Colors.gray["800"],
   },
-  loginTextContainer: {
+  addPropertyTextContainer: {
     paddingVertical: RFValue(35),
   },
-  loginTextHeader: {
+  addPropertyTextHeader: {
     fontSize: RFValue(15),
     color: Colors.gray["800"],
   },
-  loginTextDescription: {
+  addPropertyTextDescription: {
     fontSize: RFValue(12),
     color: Colors.gray["800"],
     paddingTop: RFValue(2),
   },
   buttonContainer: {
-    width: "30%",
+    width: "50%",
   },
 });
 
-export { WishList };
+export { AddProperty };

@@ -9,6 +9,7 @@ import { Colors } from "../../constants/colors";
 
 interface Props {
   backgroundColor?: string;
+  error?: boolean;
 }
 
 const TextInput: FC<Props & TextInputProps> = (props) => {
@@ -23,7 +24,12 @@ const TextInput: FC<Props & TextInputProps> = (props) => {
         style={[
           styles.container,
           { backgroundColor: props.backgroundColor || Colors.white },
-          active ? styles.activeBorder : styles.inactiveBorder,
+          active
+            ? {
+                borderWidth: 1,
+                borderColor: props.error ? Colors.red : Colors.gray["500"],
+              }
+            : styles.inactiveBorder,
         ]}
         selectionColor={Colors.primary["600"]}
       />
@@ -39,7 +45,7 @@ const styles = StyleSheet.create({
     color: Colors.gray["800"],
     fontFamily: "Poppins-Regular",
   },
-  activeBorder: { borderWidth: 1, borderColor: Colors.gray["500"] },
+  // activeBorder: { borderWidth: 1, borderColor: Colors.gray["500"] },
   inactiveBorder: { borderWidth: 0.5, borderColor: Colors.gray["400"] },
 });
 

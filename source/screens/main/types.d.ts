@@ -3,4 +3,5 @@ export type MainTabProps = {
   wishlist: any;
   messaging: any;
   settings: any;
+  addProperty: any;
 };
